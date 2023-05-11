@@ -1,6 +1,7 @@
 package com.example.kinoteka.dto.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.sql.Timestamp;
 
@@ -12,7 +13,8 @@ public class TicketSalesEntity {
     @Column(name = "sale_id")
     private int saleId;
     @Basic
-    @Column(name = "session_id", insertable=false, updatable=false)
+    @Column(name = "session_id")
+    @NotNull
     private Integer sessionId;
     @Basic
     @Column(name = "sale_time")
@@ -24,7 +26,7 @@ public class TicketSalesEntity {
     @Column(name = "price")
     private int price;
     @ManyToOne
-    @JoinColumn(name = "session_id", referencedColumnName = "session_id")
+    @JoinColumn(name = "session_id", referencedColumnName = "session_id", insertable=false, updatable=false)
     private SessionsEntity sessionsBySessionId;
 
     public int getSaleId() {

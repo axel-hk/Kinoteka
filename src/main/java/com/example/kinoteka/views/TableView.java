@@ -7,7 +7,7 @@ import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
 
 @Route(value="table", layout = MainLayout.class)
-@PageTitle("Contacts | Vaadin CRM")
+@PageTitle("Table | КиноТека")
 @PermitAll
 public class TableView extends VerticalLayout {
 

@@ -1,8 +1,10 @@
 package com.example.kinoteka.dto.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Collection;
+import java.util.Objects;
 
 @Entity
 @Table(name = "movies", schema = "public", catalog = "kino")
@@ -15,8 +17,9 @@ public class MoviesEntity {
     @Column(name = "title")
     private String title;
     @Basic
-    @Column(name = "studio_id", insertable=false, updatable=false)
-    private Integer studioId;
+    @Column(name = "studio_id")
+    @NotNull
+    private int studioId;
     @Basic
     @Column(name = "year")
     private int year;
@@ -27,22 +30,23 @@ public class MoviesEntity {
     @Column(name = "duration")
     private int duration;
     @Basic
-    @Column(name = "genre_id", insertable=false, updatable=false)
-    private Integer genreId;
+    @Column(name = "genre_id")
+    @NotNull
+    private int genreId;
     @Basic
     @Column(name = "rating")
-    private Integer rating;
+    private int rating;
     @ManyToOne
-    @JoinColumn(name = "studio_id", referencedColumnName = "studio_id")
+    @JoinColumn(name = "studio_id", referencedColumnName = "studio_id", insertable=false, updatable=false)
     private StudiosEntity studiosByStudioId;
     @ManyToOne
-    @JoinColumn(name = "genre_id", referencedColumnName = "genre_id")
+    @JoinColumn(name = "genre_id", referencedColumnName = "genre_id", insertable=false, updatable=false)
     private GenresEntity genresByGenreId;
-    @OneToMany(mappedBy = "moviesByMovieId")
+    @OneToMany(mappedBy = "moviesByMovieId", fetch = FetchType.EAGER)
     private Collection<ParticipantsEntity> participantsByMovieId;
-    @OneToMany(mappedBy = "moviesByMovieId")
+    @OneToMany(mappedBy = "moviesByMovieId", fetch = FetchType.EAGER)
     private Collection<SalesEntity> salesByMovieId;
-    @OneToMany(mappedBy = "moviesByMovieId")
+    @OneToMany(mappedBy = "moviesByMovieId", fetch = FetchType.EAGER)
     private Collection<SessionsEntity> sessionsByMovieId;
 
     public int getMovieId() {
@@ -61,7 +65,7 @@ public class MoviesEntity {
         this.title = title;
     }
 
-    public Integer getStudioId() {
+    public int getStudioId() {
         return studioId;
     }
 
@@ -93,7 +97,7 @@ public class MoviesEntity {
         this.duration = duration;
     }
 
-    public Integer getGenreId() {
+    public int getGenreId() {
         return genreId;
     }
 
@@ -101,7 +105,7 @@ public class MoviesEntity {
         this.genreId = genreId;
     }
 
-    public Integer getRating() {
+    public int getRating() {
         return rating;
     }
 
@@ -109,36 +113,18 @@ public class MoviesEntity {
         this.rating = rating;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         MoviesEntity that = (MoviesEntity) o;
-
-        if (movieId != that.movieId) return false;
-        if (year != that.year) return false;
-        if (duration != that.duration) return false;
-        if (title != null ? !title.equals(that.title) : that.title != null) return false;
-        if (studioId != null ? !studioId.equals(that.studioId) : that.studioId != null) return false;
-        if (country != null ? !country.equals(that.country) : that.country != null) return false;
-        if (genreId != null ? !genreId.equals(that.genreId) : that.genreId != null) return false;
-        if (rating != null ? !rating.equals(that.rating) : that.rating != null) return false;
-
-        return true;
+        return movieId == that.movieId && studioId == that.studioId && year == that.year && duration == that.duration && genreId == that.genreId && rating == that.rating && Objects.equals(title, that.title) && Objects.equals(country, that.country) && Objects.equals(studiosByStudioId, that.studiosByStudioId) && Objects.equals(genresByGenreId, that.genresByGenreId) && Objects.equals(participantsByMovieId, that.participantsByMovieId) && Objects.equals(salesByMovieId, that.salesByMovieId) && Objects.equals(sessionsByMovieId, that.sessionsByMovieId);
     }
 
     @Override
     public int hashCode() {
-        int result = movieId;
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (studioId != null ? studioId.hashCode() : 0);
-        result = 31 * result + year;
-        result = 31 * result + (country != null ? country.hashCode() : 0);
-        result = 31 * result + duration;
-        result = 31 * result + (genreId != null ? genreId.hashCode() : 0);
-        result = 31 * result + (rating != null ? rating.hashCode() : 0);
-        return result;
+        return Objects.hash(movieId, title, studioId, year, country, duration, genreId, rating, studiosByStudioId, genresByGenreId, participantsByMovieId, salesByMovieId, sessionsByMovieId);
     }
 
     public StudiosEntity getStudiosByStudioId() {

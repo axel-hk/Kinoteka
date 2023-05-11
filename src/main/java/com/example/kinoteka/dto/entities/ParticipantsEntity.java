@@ -1,6 +1,7 @@
 package com.example.kinoteka.dto.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.sql.Date;
 
@@ -12,7 +13,8 @@ public class ParticipantsEntity {
     @Column(name = "participant_id")
     private int participantId;
     @Basic
-    @Column(name = "movie_id", insertable=false, updatable=false)
+    @Column(name = "movie_id")
+    @NotNull
     private Integer movieId;
     @Basic
     @Column(name = "full_name")
@@ -21,13 +23,14 @@ public class ParticipantsEntity {
     @Column(name = "birth_date")
     private Date birthDate;
     @Basic
-    @Column(name = "role_id", insertable=false, updatable=false)
+    @Column(name = "role_id")
+    @NotNull
     private int roleId;
     @ManyToOne
-    @JoinColumn(name = "movie_id", referencedColumnName = "movie_id")
+    @JoinColumn(name = "movie_id", referencedColumnName = "movie_id", insertable=false, updatable=false)
     private MoviesEntity moviesByMovieId;
     @ManyToOne
-    @JoinColumn(name = "role_id", referencedColumnName = "role_id", nullable = false)
+    @JoinColumn(name = "role_id", referencedColumnName = "role_id", nullable = false, insertable=false, updatable=false)
     private RoleEntity roleByRoleId;
 
     public int getParticipantId() {

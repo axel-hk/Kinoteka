@@ -3,18 +3,19 @@ package com.example.kinoteka.dto.entities;
 import jakarta.persistence.*;
 
 import java.util.Collection;
+import java.util.Objects;
 
 @Entity
 @Table(name = "genres", schema = "public", catalog = "kino")
 public class GenresEntity {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "genre_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "genre_id", columnDefinition = "serial")
     private int genreId;
     @Basic
     @Column(name = "name")
     private String name;
-    @OneToMany(mappedBy = "genresByGenreId")
+    @OneToMany(mappedBy = "genresByGenreId", fetch = FetchType.EAGER)
     private Collection<MoviesEntity> moviesByGenreId;
 
     public int getGenreId() {
@@ -41,7 +42,7 @@ public class GenresEntity {
         GenresEntity that = (GenresEntity) o;
 
         if (genreId != that.genreId) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (!Objects.equals(name, that.name)) return false;
 
         return true;
     }

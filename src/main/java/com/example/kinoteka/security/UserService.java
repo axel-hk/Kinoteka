@@ -29,7 +29,10 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("user Not Found")));
 
     }
-    public Set<String> getAllRoles(){
-        return roles.findAll().stream().map(UserrolesEntity::getRolename).collect(Collectors.toSet());
+    public Set<String> getAllUsersRoles(String username){
+        return users.findByUsername(username).get().getUserRoles()
+                .stream()
+                .map(UserrolesEntity::getRolename)
+                .collect(Collectors.toSet());
     }
 }

@@ -1,6 +1,7 @@
 package com.example.kinoteka.dto.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "sales", schema = "public", catalog = "kino")
@@ -10,13 +11,14 @@ public class SalesEntity {
     @Column(name = "id")
     private int id;
     @Basic
-    @Column(name = "movie_id", insertable=false, updatable=false)
+    @Column(name = "movie_id")
+    @NotNull
     private int movieId;
     @Basic
     @Column(name = "total")
     private Long total;
     @ManyToOne
-    @JoinColumn(name = "movie_id", referencedColumnName = "movie_id", nullable = false)
+    @JoinColumn(name = "movie_id", referencedColumnName = "movie_id", nullable = false, insertable=false, updatable=false)
     private MoviesEntity moviesByMovieId;
 
     public int getId() {

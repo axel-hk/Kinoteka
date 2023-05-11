@@ -1,7 +1,10 @@
 package com.example.kinoteka.ui;
 
 import com.example.kinoteka.security.SecurityService;
+import com.example.kinoteka.views.GenresView;
+import com.example.kinoteka.views.MoviesView;
 import com.example.kinoteka.views.TableView;
+import com.example.kinoteka.views.UploadView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
@@ -51,8 +54,13 @@ public class MainLayout extends AppLayout {
     }
 
     private void createDrawer() {
+        if (securityService.getAllUserRoles().contains("admin") )
+            addToDrawer(new VerticalLayout(
+                    new RouterLink("Жанры", GenresView.class),
+                    new RouterLink("Фильмы", MoviesView.class)
+            ));
         addToDrawer(new VerticalLayout(
-                new RouterLink("Таблицы", TableView.class)
+                new RouterLink("Выгрузить документ", UploadView.class)
         ));
     }
 }
