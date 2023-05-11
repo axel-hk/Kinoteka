@@ -6,9 +6,9 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
 
-@Route(value="table", layout = MainLayout.class)
-@PageTitle("Table | КиноТека")
+@Route(value="upload", layout = MainLayout.class)
+@PageTitle("Upload | КиноТека")
 @PermitAll
-public class TableView extends VerticalLayout {
+public class UploadView extends VerticalLayout {
 
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "participants", schema = "public", catalog = "kino")
@@ -21,7 +22,7 @@ public class ParticipantsEntity {
     private String fullName;
     @Basic
     @Column(name = "birth_date")
-    private Date birthDate;
+    private LocalDate birthDate;
     @Basic
     @Column(name = "role_id")
     @NotNull
@@ -57,11 +58,11 @@ public class ParticipantsEntity {
         this.fullName = fullName;
     }
 
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 

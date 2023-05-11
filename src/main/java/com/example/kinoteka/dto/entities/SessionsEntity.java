@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Entity
@@ -19,7 +20,7 @@ public class SessionsEntity {
     private Integer movieId;
     @Basic
     @Column(name = "start_time")
-    private Timestamp startTime;
+    private LocalDateTime startTime;
     @Basic
     @Column(name = "seats_total")
     private int seatsTotal;
@@ -48,11 +49,11 @@ public class SessionsEntity {
         this.movieId = movieId;
     }
 
-    public Timestamp getStartTime() {
+    public  LocalDateTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Timestamp startTime) {
+    public void setStartTime( LocalDateTime startTime) {
         this.startTime = startTime;
     }
 

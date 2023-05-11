@@ -1,10 +1,7 @@
 package com.example.kinoteka.ui;
 
 import com.example.kinoteka.security.SecurityService;
-import com.example.kinoteka.views.GenresView;
-import com.example.kinoteka.views.MoviesView;
-import com.example.kinoteka.views.TableView;
-import com.example.kinoteka.views.UploadView;
+import com.example.kinoteka.views.*;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
@@ -38,7 +35,7 @@ public class MainLayout extends AppLayout {
                 LumoUtility.Margin.MEDIUM);
 
         String u = securityService.getAuthenticatedUser().getUsername();
-        Button logout = new Button("Log out " + u, e -> securityService.logout());
+        Button logout = new Button("Выйти из " + u, e -> securityService.logout());
 
         var header = new HorizontalLayout(new DrawerToggle(), logo, logout);
 
@@ -54,10 +51,13 @@ public class MainLayout extends AppLayout {
     }
 
     private void createDrawer() {
-        if (securityService.getAllUserRoles().contains("admin") )
+        if (securityService.getAllUserRoles().contains("admin") || securityService.getAllUserRoles().contains("user"))
             addToDrawer(new VerticalLayout(
                     new RouterLink("Жанры", GenresView.class),
-                    new RouterLink("Фильмы", MoviesView.class)
+                    new RouterLink("Фильмы", MoviesView.class),
+                    new RouterLink("Участники", ParticipantsView.class),
+                    new RouterLink("Профессии и Роли", RoleView.class),
+                    new RouterLink("Сеансы", SessionView.class)
             ));
         addToDrawer(new VerticalLayout(
                 new RouterLink("Выгрузить документ", UploadView.class)
