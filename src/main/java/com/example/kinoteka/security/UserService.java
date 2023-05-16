@@ -1,8 +1,8 @@
 package com.example.kinoteka.security;
 
-import com.example.kinoteka.dto.entities.UserrolesEntity;
-import com.example.kinoteka.dto.repositories.RepositoryUserroles;
-import com.example.kinoteka.dto.repositories.RepositoryUsers;
+import com.example.kinoteka.dao.entities.UserrolesEntity;
+import com.example.kinoteka.dao.repositories.RepositoryUserroles;
+import com.example.kinoteka.dao.repositories.RepositoryUsers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

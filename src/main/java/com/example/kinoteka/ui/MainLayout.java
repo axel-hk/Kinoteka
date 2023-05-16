@@ -13,8 +13,6 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.annotation.security.PermitAll;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 
 
 @Route("")
@@ -54,11 +52,15 @@ public class MainLayout extends AppLayout {
         if (securityService.getAllUserRoles().contains("admin") || securityService.getAllUserRoles().contains("user"))
             addToDrawer(new VerticalLayout(
                     new RouterLink("Жанры", GenresView.class),
-                    new RouterLink("Фильмы", MoviesView.class),
+                    new RouterLink("Фильмы", TiketsView.class),
                     new RouterLink("Участники", ParticipantsView.class),
                     new RouterLink("Профессии и Роли", RoleView.class),
-                    new RouterLink("Сеансы", SessionView.class)
+                    new RouterLink("Сеансы", SessionView.class),
+                    new RouterLink("Студии", StudioView.class),
+                    new RouterLink("Билеты", TiketsView.class)
             ));
+        if(securityService.getAllUserRoles().contains("admin")) addToDrawer(new VerticalLayout(
+                new RouterLink("Пользователи", UserView.class)));
         addToDrawer(new VerticalLayout(
                 new RouterLink("Выгрузить документ", UploadView.class)
         ));

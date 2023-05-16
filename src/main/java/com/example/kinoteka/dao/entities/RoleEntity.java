@@ -1,4 +1,4 @@
-package com.example.kinoteka.dto.entities;
+package com.example.kinoteka.dao.entities;
 
 import jakarta.persistence.*;
 

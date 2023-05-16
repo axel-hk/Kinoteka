@@ -1,7 +1,7 @@
 package com.example.kinoteka.views;
 
-import com.example.kinoteka.dao.entities.GenresEntity;
-import com.example.kinoteka.dao.repositories.RepositoryGenres;
+import com.example.kinoteka.dao.entities.StudiosEntity;
+import com.example.kinoteka.dao.repositories.RepositoryStudios;
 import com.example.kinoteka.security.SecurityService;
 import com.example.kinoteka.ui.ClearableTextField;
 import com.example.kinoteka.ui.MainLayout;
@@ -26,27 +26,26 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 
-
-
-@Route(value="Genre", layout = MainLayout.class)
-@PageTitle("Жанры | КиноТека")
+@Route(value="studios", layout = MainLayout.class)
+@PageTitle("Студия | КиноТека")
 @PermitAll
-public class GenresView extends VerticalLayout {
-    private final Grid<GenresEntity> grid = new Grid<>(GenresEntity.class);
-    private ListDataProvider<GenresEntity> dataProvider;
+public class StudioView extends VerticalLayout {
+    private final Grid<StudiosEntity> grid = new Grid<>();
+    private ListDataProvider<StudiosEntity> dataProvider;
     private final FormLayout editLayout = new FormLayout();
     private final ClearableTextField search = new ClearableTextField();
     private Button saveButton, deleteButton;
-    private final Binder<GenresEntity> binder = new Binder<>();
-    private final RepositoryGenres genres;
+    private final Binder<StudiosEntity> binder = new Binder<>();
 
-    private  GenresEntity genresEntity;
+    private  StudiosEntity studiosEntity;
+
+    private final RepositoryStudios studios;
 
     private final SecurityService securityService;
 
     @Autowired
-    public GenresView(RepositoryGenres genres, SecurityService securityService) {
-        this.genres = genres;
+    public StudioView(SecurityService securityService, RepositoryStudios studios) {
+        this.studios = studios;
         this.securityService = securityService;
     }
 
@@ -56,16 +55,23 @@ public class GenresView extends VerticalLayout {
 
         grid.setSizeFull();
         grid.setSelectionMode(Grid.SelectionMode.MULTI);
-        grid.removeColumnByKey("moviesByGenreId");
+        grid.addColumn(StudiosEntity::getStudioId).setHeader("StudioId").setSortable(true);
+        grid.addColumn(StudiosEntity::getName).setHeader("Name").setSortable(true);
+        grid.addColumn(StudiosEntity::getCountry).setHeader("Country").setSortable(true);
 
         update();
 
 
-        TextField nameField = new TextField("Жанр");
+        TextField nameField = new TextField("Студия");
+        TextField countryField = new TextField("Страна");
 
         binder.forField(nameField)
                 .asRequired()
-                .bind(GenresEntity::getName, GenresEntity::setName);
+                .bind(StudiosEntity::getName, StudiosEntity::setName);
+
+        binder.forField(countryField)
+                .asRequired()
+                .bind(StudiosEntity::getCountry, StudiosEntity::setCountry);
 
         HorizontalLayout editBarLayout = new HorizontalLayout();
         saveButton = new Button("Сохранить", this::save);
@@ -75,14 +81,14 @@ public class GenresView extends VerticalLayout {
         editBarLayout.add(saveButton, deleteButton);
 
         editLayout.setEnabled(false);
-        editLayout.add(nameField, editBarLayout);
+        editLayout.add(nameField, countryField, editBarLayout);
         editLayout.setMaxWidth("15%");
 
 
-        GridMultiSelectionModel<GenresEntity> multiSelectionModel = (GridMultiSelectionModel<GenresEntity>) grid.getSelectionModel();
+        GridMultiSelectionModel<StudiosEntity> multiSelectionModel = (GridMultiSelectionModel<StudiosEntity>) grid.getSelectionModel();
         multiSelectionModel.addMultiSelectionListener(multiSelectionEvent -> {
-            for (GenresEntity genresEntity: multiSelectionEvent.getAllSelectedItems()){
-                binder.readBean(genresEntity);
+            for (StudiosEntity StudiosEntity: multiSelectionEvent.getAllSelectedItems()){
+                binder.readBean(StudiosEntity);
             }
             editLayout.setEnabled(true);
             saveButton.setEnabled(false);
@@ -121,29 +127,29 @@ public class GenresView extends VerticalLayout {
     }
 
     private void newItem(ClickEvent<Button> buttonClickEvent) {
-        genresEntity = new GenresEntity();
-        binder.readBean(genresEntity);
+        studiosEntity = new StudiosEntity();
+        binder.readBean(studiosEntity);
         editLayout.setEnabled(true);
         saveButton.setEnabled(true);
         deleteButton.setEnabled(false);
     }
 
     private void searchFilter(HasValue.ValueChangeEvent<? extends String> valueChangeEvent) {
-        dataProvider.setFilter(GenresEntity::getName, item -> item.toLowerCase().contains(valueChangeEvent.getValue().toLowerCase()));
+        dataProvider.setFilter(StudiosEntity::getName, item -> item.toLowerCase().contains(valueChangeEvent.getValue().toLowerCase()));
     }
 
     private void delete(ClickEvent<Button> buttonClickEvent) {
-        genres.delete(genresEntity);
+        studios.delete(studiosEntity);
         update();
     }
 
     private void save(ClickEvent<Button> buttonClickEvent) {
         if(binder.isValid()){
             try{
-                binder.writeBean(genresEntity);
-                genresEntity = genres.save(genresEntity);
-                if(dataProvider.getItems().contains( genresEntity)){
-                    dataProvider.refreshItem(genresEntity);
+                binder.writeBean(studiosEntity);
+                studiosEntity = studios.save(studiosEntity);
+                if(dataProvider.getItems().contains( studiosEntity)){
+                    dataProvider.refreshItem(studiosEntity);
                 } else {
                     update();
                     search.clear();
@@ -157,8 +163,7 @@ public class GenresView extends VerticalLayout {
     }
 
     private void update(){
-        dataProvider = new ListDataProvider<>(genres.findAllByOrderByNameAsc());
+        dataProvider = new ListDataProvider<>(studios.findAllByOrderByNameAsc());
         grid.setDataProvider(dataProvider);
     }
-
 }

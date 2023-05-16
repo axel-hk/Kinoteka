@@ -1,6 +1,6 @@
 package com.example.kinoteka.security;
 
-import com.example.kinoteka.dto.entities.UsersEntity;
+import com.example.kinoteka.dao.entities.UsersEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

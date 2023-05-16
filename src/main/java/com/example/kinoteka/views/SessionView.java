@@ -1,9 +1,9 @@
 package com.example.kinoteka.views;
 
-import com.example.kinoteka.dto.entities.MoviesEntity;
-import com.example.kinoteka.dto.entities.SessionsEntity;
-import com.example.kinoteka.dto.repositories.RepositoryMovies;
-import com.example.kinoteka.dto.repositories.RepositorySessions;
+import com.example.kinoteka.dao.entities.MoviesEntity;
+import com.example.kinoteka.dao.entities.SessionsEntity;
+import com.example.kinoteka.dao.repositories.RepositoryMovies;
+import com.example.kinoteka.dao.repositories.RepositorySessions;
 import com.example.kinoteka.security.SecurityService;
 import com.example.kinoteka.ui.ClearableTextField;
 import com.example.kinoteka.ui.MainLayout;
@@ -172,7 +172,8 @@ public class SessionView extends VerticalLayout {
     }
 
     private void searchFilter(HasValue.ValueChangeEvent<? extends String> valueChangeEvent) {
-        dataProvider.setFilter(SessionsEntity::getMovieId,
+        if(valueChangeEvent.getValue().equals("")) update();
+        else dataProvider.setFilter(SessionsEntity::getMovieId,
                 item -> item.equals( Integer.parseInt(valueChangeEvent.getValue())));
     }
 

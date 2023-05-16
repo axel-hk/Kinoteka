@@ -1,7 +1,9 @@
 package com.example.kinoteka.views;
 
-import com.example.kinoteka.dao.entities.GenresEntity;
-import com.example.kinoteka.dao.repositories.RepositoryGenres;
+import com.example.kinoteka.dao.entities.SessionsEntity;
+import com.example.kinoteka.dao.entities.TicketSalesEntity;
+import com.example.kinoteka.dao.repositories.RepositorySessions;
+import com.example.kinoteka.dao.repositories.RepositoryTicketSales;
 import com.example.kinoteka.security.SecurityService;
 import com.example.kinoteka.ui.ClearableTextField;
 import com.example.kinoteka.ui.MainLayout;
@@ -9,6 +11,8 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridMultiSelectionModel;
@@ -16,7 +20,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.provider.ListDataProvider;
@@ -26,27 +30,32 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.stream.Collectors;
 
-
-@Route(value="Genre", layout = MainLayout.class)
-@PageTitle("Жанры | КиноТека")
+@Route(value="Tickets", layout = MainLayout.class)
+@PageTitle("Билеты | КиноТека")
 @PermitAll
-public class GenresView extends VerticalLayout {
-    private final Grid<GenresEntity> grid = new Grid<>(GenresEntity.class);
-    private ListDataProvider<GenresEntity> dataProvider;
+public class TiketsView extends VerticalLayout {
+    private final Grid<TicketSalesEntity> grid = new Grid<>();
+    private ListDataProvider<TicketSalesEntity> dataProvider;
     private final FormLayout editLayout = new FormLayout();
     private final ClearableTextField search = new ClearableTextField();
     private Button saveButton, deleteButton;
-    private final Binder<GenresEntity> binder = new Binder<>();
-    private final RepositoryGenres genres;
+    private final Binder<TicketSalesEntity> binder = new Binder<>();
 
-    private  GenresEntity genresEntity;
+    private final RepositoryTicketSales ticketSales;
+
+    private final RepositorySessions sessions;
+
+
+    private  TicketSalesEntity ticketSalesEntity;
 
     private final SecurityService securityService;
 
     @Autowired
-    public GenresView(RepositoryGenres genres, SecurityService securityService) {
-        this.genres = genres;
+    public TiketsView(RepositoryTicketSales ticketSales, RepositorySessions sessions, SecurityService securityService) {
+        this.ticketSales = ticketSales;
+        this.sessions = sessions;
         this.securityService = securityService;
     }
 
@@ -56,16 +65,42 @@ public class GenresView extends VerticalLayout {
 
         grid.setSizeFull();
         grid.setSelectionMode(Grid.SelectionMode.MULTI);
-        grid.removeColumnByKey("moviesByGenreId");
+        grid.addColumn(TicketSalesEntity::getSaleId).setHeader("SaleId").setSortable(true);
+        grid.addColumn(TicketSalesEntity::getSessionId).setHeader("SessionId").setSortable(true);
+        grid.addColumn(TicketSalesEntity::getSaleTime).setHeader("SaleTime").setSortable(true);
+        grid.addColumn(TicketSalesEntity::getNumTickets).setHeader("NumTickets").setSortable(true);
+        grid.addColumn(TicketSalesEntity::getPrice).setHeader("Price").setSortable(true);
 
         update();
 
 
-        TextField nameField = new TextField("Жанр");
 
-        binder.forField(nameField)
+        ComboBox<Integer> sessionsBox = new ComboBox<>("Сессия");
+        sessionsBox.setItems(sessions.findAll().stream().map(SessionsEntity::getSessionId).collect(Collectors.toSet()));
+
+        DateTimePicker saleTime = new DateTimePicker("Время продажи");
+
+        IntegerField num = new IntegerField("Количество Билетов");
+
+        IntegerField price = new IntegerField("Цена");
+        price.setMin(0);
+
+
+        binder.forField(sessionsBox)
                 .asRequired()
-                .bind(GenresEntity::getName, GenresEntity::setName);
+                .bind(TicketSalesEntity::getSessionId, TicketSalesEntity::setSessionId);
+
+        binder.forField(saleTime)
+                .asRequired()
+                .bind(TicketSalesEntity::getSaleTime, TicketSalesEntity::setSaleTime);
+
+        binder.forField(num)
+                .asRequired()
+                .bind(TicketSalesEntity::getNumTickets, TicketSalesEntity::setNumTickets);
+
+        binder.forField(price)
+                .asRequired()
+                .bind(TicketSalesEntity::getPrice, TicketSalesEntity::setPrice);
 
         HorizontalLayout editBarLayout = new HorizontalLayout();
         saveButton = new Button("Сохранить", this::save);
@@ -75,14 +110,19 @@ public class GenresView extends VerticalLayout {
         editBarLayout.add(saveButton, deleteButton);
 
         editLayout.setEnabled(false);
-        editLayout.add(nameField, editBarLayout);
         editLayout.setMaxWidth("15%");
+        editLayout.add(
+                sessionsBox,
+                saleTime,
+                num,
+                price,
+                editBarLayout);
 
 
-        GridMultiSelectionModel<GenresEntity> multiSelectionModel = (GridMultiSelectionModel<GenresEntity>) grid.getSelectionModel();
+        GridMultiSelectionModel<TicketSalesEntity> multiSelectionModel = (GridMultiSelectionModel<TicketSalesEntity>) grid.getSelectionModel();
         multiSelectionModel.addMultiSelectionListener(multiSelectionEvent -> {
-            for (GenresEntity genresEntity: multiSelectionEvent.getAllSelectedItems()){
-                binder.readBean(genresEntity);
+            for (TicketSalesEntity TicketSalesEntity: multiSelectionEvent.getAllSelectedItems()){
+                binder.readBean(TicketSalesEntity);
             }
             editLayout.setEnabled(true);
             saveButton.setEnabled(false);
@@ -111,7 +151,7 @@ public class GenresView extends VerticalLayout {
         search.setPlaceholder("Поиск");
         search.addValueChangeListener(this::searchFilter);
 
-        Button addNewButton = new Button("Новый Жанр", VaadinIcon.PLUS.create());
+        Button addNewButton = new Button("Новый Фильм", VaadinIcon.PLUS.create());
         addNewButton.addClickListener(this::newItem);
 
         tBarLayout.add(search);
@@ -121,29 +161,31 @@ public class GenresView extends VerticalLayout {
     }
 
     private void newItem(ClickEvent<Button> buttonClickEvent) {
-        genresEntity = new GenresEntity();
-        binder.readBean(genresEntity);
+        ticketSalesEntity = new TicketSalesEntity();
+        binder.readBean(ticketSalesEntity);
         editLayout.setEnabled(true);
         saveButton.setEnabled(true);
         deleteButton.setEnabled(false);
     }
 
     private void searchFilter(HasValue.ValueChangeEvent<? extends String> valueChangeEvent) {
-        dataProvider.setFilter(GenresEntity::getName, item -> item.toLowerCase().contains(valueChangeEvent.getValue().toLowerCase()));
+        if(valueChangeEvent.getValue().equals("")) update();
+        else dataProvider.setFilter(TicketSalesEntity::getSessionId,
+                item -> item.equals(Integer.parseInt(valueChangeEvent.getValue())));
     }
 
     private void delete(ClickEvent<Button> buttonClickEvent) {
-        genres.delete(genresEntity);
+        ticketSales.delete(ticketSalesEntity);
         update();
     }
 
     private void save(ClickEvent<Button> buttonClickEvent) {
         if(binder.isValid()){
             try{
-                binder.writeBean(genresEntity);
-                genresEntity = genres.save(genresEntity);
-                if(dataProvider.getItems().contains( genresEntity)){
-                    dataProvider.refreshItem(genresEntity);
+                binder.writeBean(ticketSalesEntity);
+                ticketSalesEntity = ticketSales.save(ticketSalesEntity);
+                if(dataProvider.getItems().contains(ticketSalesEntity)){
+                    dataProvider.refreshItem(ticketSalesEntity);
                 } else {
                     update();
                     search.clear();
@@ -157,7 +199,7 @@ public class GenresView extends VerticalLayout {
     }
 
     private void update(){
-        dataProvider = new ListDataProvider<>(genres.findAllByOrderByNameAsc());
+        dataProvider = new ListDataProvider<>(ticketSales.findAllByOrderBySaleId());
         grid.setDataProvider(dataProvider);
     }
 

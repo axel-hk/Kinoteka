@@ -1,9 +1,8 @@
-package com.example.kinoteka.dto.entities;
+package com.example.kinoteka.dao.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
-import java.sql.Date;
 import java.time.LocalDate;
 
 @Entity

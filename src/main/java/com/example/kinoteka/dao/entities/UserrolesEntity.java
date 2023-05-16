@@ -1,27 +1,14 @@
-package com.example.kinoteka.dto.entities;
+package com.example.kinoteka.dao.entities;
 
 import jakarta.persistence.*;
-
-import java.util.Collection;
 
 @Entity
 @Table(name = "userroles", schema = "public", catalog = "kino")
 public class UserrolesEntity {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "id")
-    private int id;
     @Basic
     @Column(name = "rolename")
     private String rolename;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getRolename() {
         return rolename;
@@ -38,7 +25,6 @@ public class UserrolesEntity {
 
         UserrolesEntity that = (UserrolesEntity) o;
 
-        if (id != that.id) return false;
         if (rolename != null ? !rolename.equals(that.rolename) : that.rolename != null) return false;
 
         return true;
@@ -46,7 +32,7 @@ public class UserrolesEntity {
 
     @Override
     public int hashCode() {
-        int result = id;
+        int result = 0;
         result = 31 * result + (rolename != null ? rolename.hashCode() : 0);
         return result;
     }

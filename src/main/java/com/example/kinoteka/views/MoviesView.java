@@ -1,11 +1,11 @@
 package com.example.kinoteka.views;
 
-import com.example.kinoteka.dto.entities.GenresEntity;
-import com.example.kinoteka.dto.entities.MoviesEntity;
-import com.example.kinoteka.dto.entities.StudiosEntity;
-import com.example.kinoteka.dto.repositories.RepositoryGenres;
-import com.example.kinoteka.dto.repositories.RepositoryMovies;
-import com.example.kinoteka.dto.repositories.RepositoryStudios;
+import com.example.kinoteka.dao.entities.GenresEntity;
+import com.example.kinoteka.dao.entities.MoviesEntity;
+import com.example.kinoteka.dao.entities.StudiosEntity;
+import com.example.kinoteka.dao.repositories.RepositoryGenres;
+import com.example.kinoteka.dao.repositories.RepositoryMovies;
+import com.example.kinoteka.dao.repositories.RepositoryStudios;
 import com.example.kinoteka.security.SecurityService;
 import com.example.kinoteka.ui.ClearableTextField;
 import com.example.kinoteka.ui.MainLayout;

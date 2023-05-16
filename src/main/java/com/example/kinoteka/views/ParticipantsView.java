@@ -1,7 +1,7 @@
 package com.example.kinoteka.views;
 
-import com.example.kinoteka.dto.entities.*;
-import com.example.kinoteka.dto.repositories.*;
+import com.example.kinoteka.dao.entities.*;
+import com.example.kinoteka.dao.repositories.*;
 import com.example.kinoteka.security.SecurityService;
 import com.example.kinoteka.ui.ClearableTextField;
 import com.example.kinoteka.ui.MainLayout;

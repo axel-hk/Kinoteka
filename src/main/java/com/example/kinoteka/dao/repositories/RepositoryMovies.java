@@ -1,8 +1,6 @@
-package com.example.kinoteka.dto.repositories;
+package com.example.kinoteka.dao.repositories;
 
-import com.example.kinoteka.dto.entities.GenresEntity;
-import com.example.kinoteka.dto.entities.MoviesEntity;
-import jakarta.persistence.criteria.CriteriaBuilder;
+import com.example.kinoteka.dao.entities.MoviesEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

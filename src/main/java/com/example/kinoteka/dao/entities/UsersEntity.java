@@ -1,10 +1,9 @@
-package com.example.kinoteka.dto.entities;
+package com.example.kinoteka.dao.entities;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-import java.util.Collection;
 import java.util.Set;
 
 @Entity
@@ -30,11 +29,11 @@ public class UsersEntity {
         return userRoles;
     }
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
     @Fetch(FetchMode.SUBSELECT)
     @JoinTable(name = "user_role", schema = "public",
         joinColumns = { @JoinColumn(name = "user_id")},
-        inverseJoinColumns =  {@JoinColumn(name = "role_id")})
+        inverseJoinColumns =  {@JoinColumn(name = "rolename")})
     private Set<UserrolesEntity> userRoles;
 
     public String getUsername() {

@@ -1,9 +1,9 @@
-package com.example.kinoteka.dto.entities;
+package com.example.kinoteka.dao.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ticket_sales", schema = "public", catalog = "kino")
@@ -18,7 +18,7 @@ public class TicketSalesEntity {
     private Integer sessionId;
     @Basic
     @Column(name = "sale_time")
-    private Timestamp saleTime;
+    private LocalDateTime saleTime;
     @Basic
     @Column(name = "num_tickets")
     private int numTickets;
@@ -45,11 +45,11 @@ public class TicketSalesEntity {
         this.sessionId = sessionId;
     }
 
-    public Timestamp getSaleTime() {
+    public  LocalDateTime getSaleTime() {
         return saleTime;
     }
 
-    public void setSaleTime(Timestamp saleTime) {
+    public void setSaleTime(LocalDateTime saleTime) {
         this.saleTime = saleTime;
     }
 

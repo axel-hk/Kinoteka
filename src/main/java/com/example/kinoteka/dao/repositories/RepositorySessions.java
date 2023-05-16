@@ -1,7 +1,6 @@
-package com.example.kinoteka.dto.repositories;
+package com.example.kinoteka.dao.repositories;
 
-import com.example.kinoteka.dto.entities.ParticipantsEntity;
-import com.example.kinoteka.dto.entities.SessionsEntity;
+import com.example.kinoteka.dao.entities.SessionsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

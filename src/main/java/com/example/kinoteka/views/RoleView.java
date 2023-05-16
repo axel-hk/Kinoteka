@@ -1,7 +1,7 @@
 package com.example.kinoteka.views;
 
-import com.example.kinoteka.dto.entities.RoleEntity;
-import com.example.kinoteka.dto.repositories.RepositoryRole;
+import com.example.kinoteka.dao.entities.RoleEntity;
+import com.example.kinoteka.dao.repositories.RepositoryRole;
 import com.example.kinoteka.security.SecurityService;
 import com.example.kinoteka.ui.ClearableTextField;
 import com.example.kinoteka.ui.MainLayout;

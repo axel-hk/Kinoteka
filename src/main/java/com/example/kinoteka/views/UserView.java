@@ -1,7 +1,9 @@
 package com.example.kinoteka.views;
 
-import com.example.kinoteka.dao.entities.GenresEntity;
-import com.example.kinoteka.dao.repositories.RepositoryGenres;
+import com.example.kinoteka.dao.entities.UserrolesEntity;
+import com.example.kinoteka.dao.entities.UsersEntity;
+import com.example.kinoteka.dao.repositories.RepositoryUserroles;
+import com.example.kinoteka.dao.repositories.RepositoryUsers;
 import com.example.kinoteka.security.SecurityService;
 import com.example.kinoteka.ui.ClearableTextField;
 import com.example.kinoteka.ui.MainLayout;
@@ -9,6 +11,7 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridMultiSelectionModel;
@@ -16,6 +19,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
@@ -27,27 +31,30 @@ import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
-
-@Route(value="Genre", layout = MainLayout.class)
-@PageTitle("Жанры | КиноТека")
+@Route(value="Users", layout = MainLayout.class)
+@PageTitle("Студия | КиноТека")
 @PermitAll
-public class GenresView extends VerticalLayout {
-    private final Grid<GenresEntity> grid = new Grid<>(GenresEntity.class);
-    private ListDataProvider<GenresEntity> dataProvider;
+public class UserView extends VerticalLayout {
+    private final Grid<UsersEntity> grid = new Grid<>();
+    private ListDataProvider<UsersEntity> dataProvider;
     private final FormLayout editLayout = new FormLayout();
     private final ClearableTextField search = new ClearableTextField();
     private Button saveButton, deleteButton;
-    private final Binder<GenresEntity> binder = new Binder<>();
-    private final RepositoryGenres genres;
+    private final Binder<UsersEntity> binder = new Binder<>();
 
-    private  GenresEntity genresEntity;
+    private  UsersEntity usersEntity;
+
+    private final RepositoryUsers users;
+
+    private final RepositoryUserroles roles;
 
     private final SecurityService securityService;
 
     @Autowired
-    public GenresView(RepositoryGenres genres, SecurityService securityService) {
-        this.genres = genres;
+    public UserView(SecurityService securityService, RepositoryUsers users,  RepositoryUserroles roles) {
+        this.users = users;
         this.securityService = securityService;
+        this.roles = roles;
     }
 
     @PostConstruct
@@ -56,16 +63,29 @@ public class GenresView extends VerticalLayout {
 
         grid.setSizeFull();
         grid.setSelectionMode(Grid.SelectionMode.MULTI);
-        grid.removeColumnByKey("moviesByGenreId");
+        grid.addColumn(UsersEntity::getId).setHeader("Id").setSortable(true);
+        grid.addColumn(UsersEntity::getUsername).setHeader("UserName").setSortable(true);
 
         update();
 
 
-        TextField nameField = new TextField("Жанр");
+        TextField nameField = new TextField("Логин");
+        PasswordField passwordField = new PasswordField("Пароль");
+        CheckboxGroup<UserrolesEntity> checkboxGroup = new CheckboxGroup<>("Роли пользователя",
+                roles.findAllByOrderByRolenameAsc());
+        checkboxGroup.setItemLabelGenerator(UserrolesEntity::getRolename);
 
         binder.forField(nameField)
                 .asRequired()
-                .bind(GenresEntity::getName, GenresEntity::setName);
+                .bind(UsersEntity::getUsername, UsersEntity::setUsername);
+
+        binder.forField(passwordField)
+                .asRequired()
+                .bind(UsersEntity::getPassword, UsersEntity::setPassword);
+
+        binder.forField(checkboxGroup)
+                .asRequired()
+                .bind(UsersEntity::getUserRoles, UsersEntity::setUserRoles);
 
         HorizontalLayout editBarLayout = new HorizontalLayout();
         saveButton = new Button("Сохранить", this::save);
@@ -75,14 +95,14 @@ public class GenresView extends VerticalLayout {
         editBarLayout.add(saveButton, deleteButton);
 
         editLayout.setEnabled(false);
-        editLayout.add(nameField, editBarLayout);
+        editLayout.add(nameField, passwordField, checkboxGroup, editBarLayout);
         editLayout.setMaxWidth("15%");
 
 
-        GridMultiSelectionModel<GenresEntity> multiSelectionModel = (GridMultiSelectionModel<GenresEntity>) grid.getSelectionModel();
+        GridMultiSelectionModel<UsersEntity> multiSelectionModel = (GridMultiSelectionModel<UsersEntity>) grid.getSelectionModel();
         multiSelectionModel.addMultiSelectionListener(multiSelectionEvent -> {
-            for (GenresEntity genresEntity: multiSelectionEvent.getAllSelectedItems()){
-                binder.readBean(genresEntity);
+            for (UsersEntity UsersEntity: multiSelectionEvent.getAllSelectedItems()){
+                binder.readBean(UsersEntity);
             }
             editLayout.setEnabled(true);
             saveButton.setEnabled(false);
@@ -121,29 +141,29 @@ public class GenresView extends VerticalLayout {
     }
 
     private void newItem(ClickEvent<Button> buttonClickEvent) {
-        genresEntity = new GenresEntity();
-        binder.readBean(genresEntity);
+        usersEntity = new UsersEntity();
+        binder.readBean(usersEntity);
         editLayout.setEnabled(true);
         saveButton.setEnabled(true);
         deleteButton.setEnabled(false);
     }
 
     private void searchFilter(HasValue.ValueChangeEvent<? extends String> valueChangeEvent) {
-        dataProvider.setFilter(GenresEntity::getName, item -> item.toLowerCase().contains(valueChangeEvent.getValue().toLowerCase()));
+        dataProvider.setFilter(UsersEntity::getUsername, item -> item.toLowerCase().contains(valueChangeEvent.getValue().toLowerCase()));
     }
 
     private void delete(ClickEvent<Button> buttonClickEvent) {
-        genres.delete(genresEntity);
+        users.delete(usersEntity);
         update();
     }
 
     private void save(ClickEvent<Button> buttonClickEvent) {
         if(binder.isValid()){
             try{
-                binder.writeBean(genresEntity);
-                genresEntity = genres.save(genresEntity);
-                if(dataProvider.getItems().contains( genresEntity)){
-                    dataProvider.refreshItem(genresEntity);
+                binder.writeBean(usersEntity);
+                usersEntity = users.save(usersEntity);
+                if(dataProvider.getItems().contains(usersEntity)){
+                    dataProvider.refreshItem(usersEntity);
                 } else {
                     update();
                     search.clear();
@@ -157,8 +177,7 @@ public class GenresView extends VerticalLayout {
     }
 
     private void update(){
-        dataProvider = new ListDataProvider<>(genres.findAllByOrderByNameAsc());
+        dataProvider = new ListDataProvider<>(users.findAllByOrderByUsername());
         grid.setDataProvider(dataProvider);
     }
-
 }
