@@ -1,5 +1,6 @@
 package com.example.kinoteka.views;
 
+import com.example.kinoteka.dao.entities.MoviesEntity;
 import com.example.kinoteka.dao.entities.SessionsEntity;
 import com.example.kinoteka.dao.entities.TicketSalesEntity;
 import com.example.kinoteka.dao.repositories.RepositorySessions;
@@ -16,6 +17,7 @@ import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridMultiSelectionModel;
+import com.vaadin.flow.component.grid.GridSingleSelectionModel;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -64,7 +66,7 @@ public class TiketsView extends VerticalLayout {
         setSizeFull();
 
         grid.setSizeFull();
-        grid.setSelectionMode(Grid.SelectionMode.MULTI);
+        grid.setSelectionMode(Grid.SelectionMode.SINGLE);
         grid.addColumn(TicketSalesEntity::getSaleId).setHeader("SaleId").setSortable(true);
         grid.addColumn(TicketSalesEntity::getSessionId).setHeader("SessionId").setSortable(true);
         grid.addColumn(TicketSalesEntity::getSaleTime).setHeader("SaleTime").setSortable(true);
@@ -119,11 +121,10 @@ public class TiketsView extends VerticalLayout {
                 editBarLayout);
 
 
-        GridMultiSelectionModel<TicketSalesEntity> multiSelectionModel = (GridMultiSelectionModel<TicketSalesEntity>) grid.getSelectionModel();
-        multiSelectionModel.addMultiSelectionListener(multiSelectionEvent -> {
-            for (TicketSalesEntity TicketSalesEntity: multiSelectionEvent.getAllSelectedItems()){
-                binder.readBean(TicketSalesEntity);
-            }
+        GridSingleSelectionModel<TicketSalesEntity> singleSelectionModel = (GridSingleSelectionModel<TicketSalesEntity>)  grid.getSelectionModel();
+        singleSelectionModel.addSingleSelectionListener(event -> {
+            ticketSalesEntity = event.getSelectedItem().orElse(null);
+            binder.readBean(ticketSalesEntity);
             editLayout.setEnabled(true);
             saveButton.setEnabled(false);
             deleteButton.setEnabled(true);

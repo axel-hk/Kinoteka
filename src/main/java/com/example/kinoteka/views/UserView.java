@@ -1,5 +1,6 @@
 package com.example.kinoteka.views;
 
+import com.example.kinoteka.dao.entities.MoviesEntity;
 import com.example.kinoteka.dao.entities.UserrolesEntity;
 import com.example.kinoteka.dao.entities.UsersEntity;
 import com.example.kinoteka.dao.repositories.RepositoryUserroles;
@@ -15,6 +16,7 @@ import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridMultiSelectionModel;
+import com.vaadin.flow.component.grid.GridSingleSelectionModel;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -62,7 +64,7 @@ public class UserView extends VerticalLayout {
         setSizeFull();
 
         grid.setSizeFull();
-        grid.setSelectionMode(Grid.SelectionMode.MULTI);
+        grid.setSelectionMode(Grid.SelectionMode.SINGLE);
         grid.addColumn(UsersEntity::getId).setHeader("Id").setSortable(true);
         grid.addColumn(UsersEntity::getUsername).setHeader("UserName").setSortable(true);
 
@@ -99,11 +101,10 @@ public class UserView extends VerticalLayout {
         editLayout.setMaxWidth("15%");
 
 
-        GridMultiSelectionModel<UsersEntity> multiSelectionModel = (GridMultiSelectionModel<UsersEntity>) grid.getSelectionModel();
-        multiSelectionModel.addMultiSelectionListener(multiSelectionEvent -> {
-            for (UsersEntity UsersEntity: multiSelectionEvent.getAllSelectedItems()){
-                binder.readBean(UsersEntity);
-            }
+        GridSingleSelectionModel<UsersEntity> singleSelectionModel = (GridSingleSelectionModel<UsersEntity>)  grid.getSelectionModel();
+        singleSelectionModel.addSingleSelectionListener(event -> {
+            usersEntity = event.getSelectedItem().orElse(null);
+            binder.readBean(usersEntity);
             editLayout.setEnabled(true);
             saveButton.setEnabled(false);
             deleteButton.setEnabled(true);

@@ -17,6 +17,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridMultiSelectionModel;
+import com.vaadin.flow.component.grid.GridSingleSelectionModel;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -69,7 +70,7 @@ public class MoviesView extends VerticalLayout {
         setSizeFull();
 
         grid.setSizeFull();
-        grid.setSelectionMode(Grid.SelectionMode.MULTI);
+        grid.setSelectionMode(Grid.SelectionMode.SINGLE);
         grid.addColumn(MoviesEntity::getMovieId).setHeader("MovieId").setSortable(true);
         grid.addColumn(MoviesEntity::getTitle).setHeader("Title").setSortable(true);
         grid.addColumn(MoviesEntity::getStudioId).setHeader("StudioId").setSortable(true);
@@ -152,11 +153,10 @@ public class MoviesView extends VerticalLayout {
                 editBarLayout);
 
 
-        GridMultiSelectionModel<MoviesEntity> multiSelectionModel = (GridMultiSelectionModel<MoviesEntity>) grid.getSelectionModel();
-        multiSelectionModel.addMultiSelectionListener(multiSelectionEvent -> {
-            for (MoviesEntity moviesEntity: multiSelectionEvent.getAllSelectedItems()){
-                binder.readBean(moviesEntity);
-            }
+        GridSingleSelectionModel<MoviesEntity> singleSelectionModel = (GridSingleSelectionModel<MoviesEntity>)  grid.getSelectionModel();
+        singleSelectionModel.addSingleSelectionListener(event -> {
+            moviesEntity = event.getSelectedItem().orElse(null);
+            binder.readBean(moviesEntity);
             editLayout.setEnabled(true);
             saveButton.setEnabled(false);
             deleteButton.setEnabled(true);

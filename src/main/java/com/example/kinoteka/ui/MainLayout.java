@@ -52,12 +52,13 @@ public class MainLayout extends AppLayout {
         if (securityService.getAllUserRoles().contains("admin") || securityService.getAllUserRoles().contains("user"))
             addToDrawer(new VerticalLayout(
                     new RouterLink("Жанры", GenresView.class),
-                    new RouterLink("Фильмы", TiketsView.class),
+                    new RouterLink("Фильмы", MoviesView.class),
                     new RouterLink("Участники", ParticipantsView.class),
                     new RouterLink("Профессии и Роли", RoleView.class),
                     new RouterLink("Сеансы", SessionView.class),
                     new RouterLink("Студии", StudioView.class),
-                    new RouterLink("Билеты", TiketsView.class)
+                    new RouterLink("Билеты", TiketsView.class),
+                    new RouterLink("Расписание", TimeTableView.class)
             ));
         if(securityService.getAllUserRoles().contains("admin")) addToDrawer(new VerticalLayout(
                 new RouterLink("Пользователи", UserView.class)));

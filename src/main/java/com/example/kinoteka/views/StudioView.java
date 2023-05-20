@@ -1,5 +1,6 @@
 package com.example.kinoteka.views;
 
+import com.example.kinoteka.dao.entities.MoviesEntity;
 import com.example.kinoteka.dao.entities.StudiosEntity;
 import com.example.kinoteka.dao.repositories.RepositoryStudios;
 import com.example.kinoteka.security.SecurityService;
@@ -12,6 +13,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridMultiSelectionModel;
+import com.vaadin.flow.component.grid.GridSingleSelectionModel;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -54,7 +56,7 @@ public class StudioView extends VerticalLayout {
         setSizeFull();
 
         grid.setSizeFull();
-        grid.setSelectionMode(Grid.SelectionMode.MULTI);
+        grid.setSelectionMode(Grid.SelectionMode.SINGLE);
         grid.addColumn(StudiosEntity::getStudioId).setHeader("StudioId").setSortable(true);
         grid.addColumn(StudiosEntity::getName).setHeader("Name").setSortable(true);
         grid.addColumn(StudiosEntity::getCountry).setHeader("Country").setSortable(true);
@@ -85,11 +87,10 @@ public class StudioView extends VerticalLayout {
         editLayout.setMaxWidth("15%");
 
 
-        GridMultiSelectionModel<StudiosEntity> multiSelectionModel = (GridMultiSelectionModel<StudiosEntity>) grid.getSelectionModel();
-        multiSelectionModel.addMultiSelectionListener(multiSelectionEvent -> {
-            for (StudiosEntity StudiosEntity: multiSelectionEvent.getAllSelectedItems()){
-                binder.readBean(StudiosEntity);
-            }
+        GridSingleSelectionModel<StudiosEntity> singleSelectionModel = (GridSingleSelectionModel<StudiosEntity>)  grid.getSelectionModel();
+        singleSelectionModel.addSingleSelectionListener(event -> {
+            studiosEntity = event.getSelectedItem().orElse(null);
+            binder.readBean(studiosEntity);
             editLayout.setEnabled(true);
             saveButton.setEnabled(false);
             deleteButton.setEnabled(true);

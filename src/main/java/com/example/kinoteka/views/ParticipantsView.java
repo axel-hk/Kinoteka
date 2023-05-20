@@ -14,6 +14,7 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridMultiSelectionModel;
+import com.vaadin.flow.component.grid.GridSingleSelectionModel;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -63,7 +64,7 @@ public class ParticipantsView extends VerticalLayout {
         setSizeFull();
 
         grid.setSizeFull();
-        grid.setSelectionMode(Grid.SelectionMode.MULTI);
+        grid.setSelectionMode(Grid.SelectionMode.SINGLE);
         grid.addColumn(ParticipantsEntity::getParticipantId).setHeader("ParticipantId").setSortable(true);
         grid.addColumn(ParticipantsEntity::getFullName).setHeader("FullName").setSortable(true);
         grid.addColumn(ParticipantsEntity::getBirthDate).setHeader("BirthDate").setSortable(true);
@@ -118,11 +119,10 @@ public class ParticipantsView extends VerticalLayout {
                 editBarLayout);
 
 
-        GridMultiSelectionModel<ParticipantsEntity> multiSelectionModel = (GridMultiSelectionModel<ParticipantsEntity>) grid.getSelectionModel();
-        multiSelectionModel.addMultiSelectionListener(multiSelectionEvent -> {
-            for (ParticipantsEntity ParticipantsEntity: multiSelectionEvent.getAllSelectedItems()){
-                binder.readBean(ParticipantsEntity);
-            }
+        GridSingleSelectionModel<ParticipantsEntity> singleSelectionModel = (GridSingleSelectionModel<ParticipantsEntity>)  grid.getSelectionModel();
+        singleSelectionModel.addSingleSelectionListener(event -> {
+            participantsEntity = event.getSelectedItem().orElse(null);
+            binder.readBean(participantsEntity);
             editLayout.setEnabled(true);
             saveButton.setEnabled(false);
             deleteButton.setEnabled(true);

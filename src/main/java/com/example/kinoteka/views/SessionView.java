@@ -16,6 +16,7 @@ import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridMultiSelectionModel;
+import com.vaadin.flow.component.grid.GridSingleSelectionModel;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -64,7 +65,7 @@ public class SessionView extends VerticalLayout {
         setSizeFull();
 
         grid.setSizeFull();
-        grid.setSelectionMode(Grid.SelectionMode.MULTI);
+        grid.setSelectionMode(Grid.SelectionMode.SINGLE);
         grid.addColumn(SessionsEntity::getSessionId).setHeader("SessionId").setSortable(true);
         grid.addColumn(SessionsEntity::getMovieId).setHeader("MovieId").setSortable(true);
         grid.addColumn(SessionsEntity::getStartTime).setHeader("StartTime").setSortable(true);
@@ -122,11 +123,10 @@ public class SessionView extends VerticalLayout {
                 editBarLayout);
 
 
-        GridMultiSelectionModel<SessionsEntity> multiSelectionModel = (GridMultiSelectionModel<SessionsEntity>) grid.getSelectionModel();
-        multiSelectionModel.addMultiSelectionListener(multiSelectionEvent -> {
-            for (SessionsEntity SessionsEntity: multiSelectionEvent.getAllSelectedItems()){
-                binder.readBean(SessionsEntity);
-            }
+        GridSingleSelectionModel<SessionsEntity> singleSelectionModel = (GridSingleSelectionModel<SessionsEntity>)  grid.getSelectionModel();
+        singleSelectionModel.addSingleSelectionListener(event -> {
+            sessionsEntity = event.getSelectedItem().orElse(null);
+            binder.readBean(sessionsEntity);
             editLayout.setEnabled(true);
             saveButton.setEnabled(false);
             deleteButton.setEnabled(true);

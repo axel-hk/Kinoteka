@@ -17,6 +17,9 @@ import jakarta.persistence.Access;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @Route(value="upload", layout = MainLayout.class)
 @PageTitle("Upload | КиноТека")
@@ -42,6 +45,8 @@ public class UploadView extends VerticalLayout {
     private void upload(ClickEvent<Button> buttonClickEvent) {
         Document document = new Document();
         dtoSerivce.createEntityManager();
+        dtoSerivce.getCurrentSessions();
+        dtoSerivce.getGenreStatistics();
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             PdfWriter.getInstance(document, baos);

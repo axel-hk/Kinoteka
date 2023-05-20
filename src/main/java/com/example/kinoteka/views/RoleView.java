@@ -1,5 +1,6 @@
 package com.example.kinoteka.views;
 
+import com.example.kinoteka.dao.entities.MoviesEntity;
 import com.example.kinoteka.dao.entities.RoleEntity;
 import com.example.kinoteka.dao.repositories.RepositoryRole;
 import com.example.kinoteka.security.SecurityService;
@@ -12,6 +13,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridMultiSelectionModel;
+import com.vaadin.flow.component.grid.GridSingleSelectionModel;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -55,7 +57,7 @@ public class RoleView extends VerticalLayout {
         setSizeFull();
 
         grid.setSizeFull();
-        grid.setSelectionMode(Grid.SelectionMode.MULTI);
+        grid.setSelectionMode(Grid.SelectionMode.SINGLE);
         grid.addColumn(RoleEntity::getRoleId).setHeader("RoleId").setSortable(true);
         grid.addColumn(RoleEntity::getName).setHeader("Name").setSortable(true);
         update();
@@ -79,11 +81,10 @@ public class RoleView extends VerticalLayout {
         editLayout.setMaxWidth("15%");
 
 
-        GridMultiSelectionModel<RoleEntity> multiSelectionModel = (GridMultiSelectionModel<RoleEntity>) grid.getSelectionModel();
-        multiSelectionModel.addMultiSelectionListener(multiSelectionEvent -> {
-            for (RoleEntity RoleEntity: multiSelectionEvent.getAllSelectedItems()){
-                binder.readBean(RoleEntity);
-            }
+        GridSingleSelectionModel<RoleEntity> singleSelectionModel = (GridSingleSelectionModel<RoleEntity>)  grid.getSelectionModel();
+        singleSelectionModel.addSingleSelectionListener(event -> {
+            roleEntity = event.getSelectedItem().orElse(null);
+            binder.readBean(roleEntity);
             editLayout.setEnabled(true);
             saveButton.setEnabled(false);
             deleteButton.setEnabled(true);
