@@ -95,7 +95,7 @@ public class DtoSerivce {
         Query query = entityManager.createNativeQuery(sqlQuery);
         query.setParameter("param", id);
 
-        return query.getFirstResult();
+        return (Integer) query.getSingleResult();
     }
 
     public String getDuration(Integer duration){
@@ -108,7 +108,7 @@ public class DtoSerivce {
     }
 
     public String getSername(String fullName){
-        String sqlQuery = "select * from public.ffio_to_familiya(:param)";
+        String sqlQuery = "select * from public.fio_to_familiya(:param)";
 
         Query query = entityManager.createNativeQuery(sqlQuery);
         query.setParameter("param", fullName);
@@ -133,9 +133,6 @@ public class DtoSerivce {
         return query.getResultList();
     }
 
-//    for(Object o: dtoSerivce.getMoviesWithDirectorInLeadRole()){
-//        List<Object> objects = Collections.singletonList(o);
-//    }
 
     public List<MoviesEntity> getMoviesInCurrentYear() {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();

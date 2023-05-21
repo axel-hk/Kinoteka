@@ -46,7 +46,6 @@ public class UploadView extends VerticalLayout {
         Document document = new Document();
         dtoSerivce.createEntityManager();
         dtoSerivce.getCurrentSessions();
-        dtoSerivce.getGenreStatistics();
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             PdfWriter.getInstance(document, baos);

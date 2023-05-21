@@ -63,6 +63,9 @@ public class MainLayout extends AppLayout {
         if(securityService.getAllUserRoles().contains("admin")) addToDrawer(new VerticalLayout(
                 new RouterLink("Пользователи", UserView.class)));
         addToDrawer(new VerticalLayout(
+                new RouterLink("Демонстрация Функций", FunctionView.class)
+        ));
+        addToDrawer(new VerticalLayout(
                 new RouterLink("Выгрузить документ", UploadView.class)
         ));
     }
